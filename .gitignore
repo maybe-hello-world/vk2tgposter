@@ -1,3 +1,5 @@
 config.py
 *.txt
 *.log
+.idea/
+__pycache__/
