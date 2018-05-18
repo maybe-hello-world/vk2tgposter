@@ -1,0 +1,64 @@
+# rename to config.py
+
+# ----------------------------------
+# VK Settings
+# get your own vk access token, bastard!
+vk_access_token = "VK ACCESS TOKEN HERE"
+
+# current version of vk api
+v = 5.75
+
+# short name of your community
+domain = "nplusone"
+
+# if community doesn't have name - set domain to None and
+# set owner to -DOMAIN_ID (minus sign is important)
+owner = None
+
+# how much posts get for checking
+# (more number - less number of requests to vk.com but requests are heavier)
+count = 5
+
+# Base url for direct link to community
+BASE_POST_URL = "https://vk.com/wall-91933860_"
+
+# Base domain (no need to modify usually)
+URL_VK = "https://api.vk.com/method/wall.get?count={}&filter=owner&access_token={}&v={}"
+
+# ----------------------------------
+# Telegram settings
+
+# Your telegram bot token
+telegram_bot_token = "telegram bot token here"
+
+# channel where to post
+channel_name = "@channel_name"
+
+# ----------------------------------
+# Other settings
+
+# Timeout (how often to check for new posts in minutes)
+check_timeout = 3
+
+# where information about last resent post is stored
+lastid_file = "last_known_id.txt"
+
+# bot logging file
+bot_log_file = "vk2tg_repost.log"
+
+# ----------------------------------
+# Proxy settings
+
+use_proxy = False
+proxy_user = "username"
+proxy_pass = "password"
+proxy_address = "127.0.0.1"
+proxy_port = "8080"
+
+
+
+
+
+
+
+
