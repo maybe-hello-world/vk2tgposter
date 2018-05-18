@@ -1,5 +1,5 @@
 config.py
-*.txt
+last_known_id.txt
 *.log
 .idea/
 __pycache__/
