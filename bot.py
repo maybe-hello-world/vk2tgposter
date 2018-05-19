@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import time
-import eventlet
 import requests
 import logging
 import telebot
@@ -33,15 +32,12 @@ bot = telebot.TeleBot(config.telegram_bot_token)
 # get data from vk
 # TODO: add offset?
 def get_data():
-	timeout = eventlet.Timeout(10)
 	try:
-		feed = requests.get(config.URL_VK)
+		feed = requests.get(config.URL_VK, timeout=10)
 		return feed.json()
-	except eventlet.timeout.Timeout:
+	except requests.exceptions.Timeout:
 		logging.warning("[VK] Got Timeout while retrieving VK JSON data. Cancelling...")
 		return None
-	finally:
-		timeout.cancel()
 
 # send all got items to channel
 def send_new_posts(items, last_id):
