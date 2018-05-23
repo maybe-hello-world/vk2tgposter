@@ -34,6 +34,7 @@ bot = telebot.TeleBot(config.telegram_bot_token)
 def get_data():
 	try:
 		feed = requests.get(config.URL_VK, timeout=10)
+		assert feed.json() is not None, '[Error] Feed got from error is None'
 		return feed.json()
 	except requests.exceptions.Timeout:
 		logging.warning("[VK] Got Timeout while retrieving VK JSON data. Cancelling...")
@@ -123,11 +124,14 @@ def check_new_posts_vk():
 				if 'is_pinned' in entries[0]:
 					del entries[0]
 
-				idfile.write(str(entries[0]['id']))
-				logging.info('[File system] New VK post last_id  is {}'.format(entries[0]['id']))
+				if len(entries) == 0:
+					logging.error('[Error] Entries is null!')
+				else:
+					idfile.write(str(entries[0]['id']))
+					logging.info('[File system] New VK post last_id  is {}'.format(entries[0]['id']))
 
 	except Exception as ex:
-		logging.error('[Exception] Exception of type {} in check_new_post(): {}'.format(type(ex).__name__, str(ex)))
+		logging.exception('[Exception] Exception of type {} in check_new_post(): {}'.format(type(ex).__name__, str(ex)))
 
 	logging.info("[VK] Finished scanning")
 	return
