@@ -114,21 +114,20 @@ def check_new_posts_vk():
 		if feed is not None:
 			entries = feed['response']['items']
 
+			# delete pinned post if it was already published
+			if 'is_pinned' in entries[0] and entries[0]['id'] <= last_id:
+				del entries[0]
+
 			# send new posts
 			send_new_posts(entries, last_id)
 
 			# write last id to file
 			with open(config.lastid_file, 'wt') as idfile:
-
-				# do not set pinned post as last
-				if 'is_pinned' in entries[0]:
-					del entries[0]
-
 				if len(entries) == 0:
 					logging.error('[Error] Entries is null!')
 				else:
 					idfile.write(str(entries[0]['id']))
-					logging.info('[File system] New VK post last_id  is {}'.format(entries[0]['id']))
+					logging.info('[File system] New VK post last_id is {}'.format(entries[0]['id']))
 
 	except Exception as ex:
 		logging.exception('[Exception] Exception of type {} in check_new_post(): {}'.format(type(ex).__name__, str(ex)))
