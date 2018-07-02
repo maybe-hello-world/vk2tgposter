@@ -34,6 +34,9 @@ telegram_bot_token = "telegram bot token here"
 # channel where to post
 channel_name = "@channel_name"
 
+# channel to send errors
+service_channel_name = "@service_channel_name"
+
 # ----------------------------------
 # Other settings
 
