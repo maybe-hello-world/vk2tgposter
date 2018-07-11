@@ -8,8 +8,7 @@ import telebot
 import config
 
 if config.use_proxy:
-	from telebot import apihelper
-	apihelper.proxy = {'https':'socks5://{}:{}@{}:{}'.format(
+	telebot.apihelper.proxy = {'https':'socks5://{}:{}@{}:{}'.format(
 		config.proxy_user,
 		config.proxy_pass,
 		config.proxy_address,
@@ -47,13 +46,14 @@ def send_new_posts(items, last_id):
 			continue
 
 		# Posts without text?
-		text = "No text in message :D"
+		text = "<bot>: no text in original message\n"
 		if 'text' in item:
 			text = item['text'] + "\n"
 
 		message = text
+		mediaGroup = []
 
-		# list attachements
+		# list attachments
 		if 'attachments' in item:
 			attaches = {
 				"photo": [],
@@ -74,16 +74,16 @@ def send_new_posts(items, last_id):
 				else:
 					attaches['other'].add(attach['type'])
 
-			# Append photos to message
+			# Photos are sent in next message as album
 			if len(attaches['photo']) > 0:
-				message += "\nPhotos:\n"
-				message += "\n".join(attaches['photo']) + "\n"
+				for i in attaches['photo']:
+					mediaGroup.append(telebot.types.InputMediaPhoto(i))
 
 			if len(attaches['link']) > 0:
 				message += "\nLinks:\n"
 				message += "\n".join(attaches['link']) + "\n"
 
-			# Say that there are other types of attachements in post
+			# Say that there are other types of attachments in post
 			if len(attaches['other']) > 0:
 				message += "There're another attachments with types: " + ",".join(attaches['other']) + "\n"
 
@@ -91,9 +91,17 @@ def send_new_posts(items, last_id):
 		# add link to original message and send
 		message += "\nOriginal URL: {}{}".format(config.BASE_POST_URL, item['id'])
 		splitted_message = telebot.util.split_string(message, 3000)
+
+		# First message is sent with notification, all others - without
+		notifDisabled = False
 		for text in splitted_message:
-			bot.send_message(config.channel_name, text)
+			bot.send_message(config.channel_name, text, disable_notification=notifDisabled)
+			notifDisabled = notifDisabled or True
+
+		# send photos as albums
+		bot.send_media_group(config.channel_name, mediaGroup, disable_notification=True)
 		time.sleep(1)
+
 	return
 
 # check posts
@@ -129,8 +137,8 @@ def check_new_posts_vk():
 					idfile.write(str(entries[0]['id']))
 					logging.info('[File system] New VK post last_id is {}'.format(entries[0]['id']))
 
-	except Exception as ex:
-		logging.exception('[Exception] Exception of type {} in check_new_post(): {}'.format(type(ex).__name__, str(ex)))
+	except Exception as nex:
+		logging.exception('[Exception] Exception of type {} in check_new_post(): {}'.format(type(nex).__name__, str(nex)))
 
 	logging.info("[VK] Finished scanning")
 	return
