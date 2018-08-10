@@ -8,7 +8,7 @@ import telebot
 import config
 
 if config.use_proxy:
-	telebot.apihelper.proxy = {'https':'socks5://{}:{}@{}:{}'.format(
+	telebot.apihelper.proxy = {'https': 'socks5://{}:{}@{}:{}'.format(
 		config.proxy_user,
 		config.proxy_pass,
 		config.proxy_address,
@@ -16,7 +16,8 @@ if config.use_proxy:
 	)}
 
 # config check
-assert config.owner is not None or config.domain is not None, "Owner (number) or domain (short name) of community must be not None"
+assert config.owner is not None or config.domain is not None, "Owner (number) or domain (short name) of community " \
+																"must be not None"
 
 # Create URL from domain/owner
 config.URL_VK = config.URL_VK.format(config.count, config.vk_access_token, config.v)
@@ -27,6 +28,7 @@ else:
 
 # start bot
 bot = telebot.TeleBot(config.telegram_bot_token)
+
 
 # get data from vk
 # TODO: add offset?
@@ -39,11 +41,10 @@ def get_data():
 		logging.warning("[VK] Got Timeout while retrieving VK JSON data. Cancelling...")
 		return None
 
+
 # send all got items to channel
-def send_new_posts(items, last_id):
+def send_new_posts(items):
 	for item in reversed(items):
-		if item['id'] <= last_id:
-			continue
 
 		# Posts without text?
 		text = "<bot>: no text in original message\n"
@@ -51,7 +52,7 @@ def send_new_posts(items, last_id):
 			text = item['text'] + "\n"
 
 		message = text
-		mediaGroup = []
+		media_group = []
 
 		# list attachments
 		if 'attachments' in item:
@@ -77,7 +78,7 @@ def send_new_posts(items, last_id):
 			# Photos are sent in next message as album
 			if len(attaches['photo']) > 0:
 				for i in attaches['photo']:
-					mediaGroup.append(telebot.types.InputMediaPhoto(i))
+					media_group.append(telebot.types.InputMediaPhoto(i))
 
 			if len(attaches['link']) > 0:
 				message += "\nLinks:\n"
@@ -87,22 +88,26 @@ def send_new_posts(items, last_id):
 			if len(attaches['other']) > 0:
 				message += "There're another attachments with types: " + ",".join(attaches['other']) + "\n"
 
-
 		# add link to original message and send
 		message += "\nOriginal URL: {}{}".format(config.BASE_POST_URL, item['id'])
 		splitted_message = telebot.util.split_string(message, 3000)
 
 		# First message is sent with notification, all others - without
-		notifDisabled = False
+		notif_disabled = False
 		for text in splitted_message:
-			bot.send_message(config.channel_name, text, disable_notification=notifDisabled)
-			notifDisabled = notifDisabled or True
+			bot.send_message(config.channel_name, text, disable_notification=notif_disabled)
+			notif_disabled = notif_disabled or True
 
 		# send photos as albums
-		bot.send_media_group(config.channel_name, mediaGroup, disable_notification=True)
-		time.sleep(1)
-
+		try:
+			if len(media_group) > 0:
+				bot.send_media_group(config.channel_name, media_group, disable_notification=True)
+			time.sleep(1)
+		except Exception as e:
+			logging.exception('[Exception] Media group send failed: {}'.format(str(e)))
+			logging.exception('[Exception] Dump of media group: {}'.format([i.media for i in media_group]))
 	return
+
 
 # check posts
 def check_new_posts_vk():
@@ -116,32 +121,36 @@ def check_new_posts_vk():
 			return
 		logging.info('[File system] Last VK post ID read = {}'.format(last_id))
 
-
 	try:
 		feed = get_data()
 		if feed is not None:
 			entries = feed['response']['items']
 
-			# delete pinned post if it was already published
-			if 'is_pinned' in entries[0] and entries[0]['id'] <= last_id:
-				del entries[0]
+			if len(entries) == 0:
+				logging.warning('[Warning] Entries is null')
+
+			# delete all posts that already were published
+			for i in range(len(entries) - 1, -1, -1):
+				if entries[i]['id'] <= last_id:
+					del entries[i]
 
 			# send new posts
-			send_new_posts(entries, last_id)
+			if len(entries) > 0:
+				send_new_posts(entries)
 
-			# write last id to file
-			with open(config.lastid_file, 'wt') as idfile:
-				if len(entries) == 0:
-					logging.error('[Error] Entries is null!')
-				else:
+				# write last id to file
+				with open(config.lastid_file, 'wt') as idfile:
 					idfile.write(str(entries[0]['id']))
 					logging.info('[File system] New VK post last_id is {}'.format(entries[0]['id']))
+			else:
+				logging.info('[Info] Nothing new...')
 
 	except Exception as nex:
 		logging.exception('[Exception] Exception of type {} in check_new_post(): {}'.format(type(nex).__name__, str(nex)))
 
 	logging.info("[VK] Finished scanning")
 	return
+
 
 if __name__ == "__main__":
 	# set requests logging level to CRITICAL only
@@ -164,5 +173,3 @@ if __name__ == "__main__":
 		logging.info("[App] Script stopped due to: {}".format(str(ex)))
 	finally:
 		logging.info('[App] Script exited.\n')
-
-
