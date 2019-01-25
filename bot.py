@@ -76,16 +76,16 @@ def send_new_posts(items):
 					attaches['other'].add(attach['type'])
 
 			# Photos are sent in next message as album
-			if len(attaches['photo']) > 0:
+			if attaches['photo']:
 				for i in attaches['photo']:
 					media_group.append(telebot.types.InputMediaPhoto(i))
 
-			if len(attaches['link']) > 0:
+			if attaches['link']:
 				message += "\nLinks:\n"
 				message += "\n".join(attaches['link']) + "\n"
 
 			# Say that there are other types of attachments in post
-			if len(attaches['other']) > 0:
+			if attaches['other']:
 				message += "There're another attachments with types: " + ",".join(attaches['other']) + "\n"
 
 		# add link to original message and send
@@ -100,7 +100,7 @@ def send_new_posts(items):
 
 		# send photos as albums
 		try:
-			if len(media_group) > 0:
+			if media_group:
 				bot.send_media_group(config.channel_name, media_group, disable_notification=True)
 			time.sleep(1)
 		except Exception as e:
@@ -126,7 +126,7 @@ def check_new_posts_vk():
 		if feed is not None:
 			entries = feed['response']['items']
 
-			if len(entries) == 0:
+			if not entries:
 				logging.warning('[Warning] Entries is null')
 
 			# delete all posts that already were published
@@ -135,7 +135,7 @@ def check_new_posts_vk():
 					del entries[i]
 
 			# send new posts
-			if len(entries) > 0:
+			if entries:
 				send_new_posts(entries)
 
 				# write last id to file
