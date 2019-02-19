@@ -24,7 +24,7 @@ config.URL_VK = config.URL_VK.format(config.count, config.vk_access_token, confi
 if config.domain is not None:
 	config.URL_VK += "&domain=" + config.domain
 else:
-	config.URL_VK += "&owner=" + config.owner
+	config.URL_VK += "&owner_id=" + config.owner
 
 # start bot
 bot = telebot.TeleBot(config.telegram_bot_token)
