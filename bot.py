@@ -168,7 +168,7 @@ if __name__ == "__main__":
 			check_new_posts_vk()
 
 			logging.info("[App] Sleeping for timeout...")
-			time.sleep(60 * config.check_timeout)
+			time.sleep(config.check_timeout)
 	except BaseException as ex:
 		logging.info("[App] Script stopped due to: {}".format(str(ex)))
 	finally:

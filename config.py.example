@@ -40,8 +40,8 @@ service_channel_name = "@service_channel_name"
 # ----------------------------------
 # Other settings
 
-# Timeout (how often to check for new posts in minutes)
-check_timeout = 3
+# Timeout (how often to check for new posts in seconds)
+check_timeout = 180
 
 # where information about last resent post is stored
 lastid_file = "last_known_id.txt"
