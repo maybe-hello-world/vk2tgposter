@@ -96,7 +96,7 @@ def send_new_posts(items):
         notif_disabled = False
         for text in splitted_message:
             bot.send_message(config.channel_name, text, disable_notification=notif_disabled)
-            notif_disabled = notif_disabled or True
+            notif_disabled = True
 
         # send photos as albums
         try:
