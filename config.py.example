@@ -2,7 +2,7 @@
 
 # ----------------------------------
 # VK Settings
-# get your own vk access token, bastard!
+# get your own vk access token
 vk_access_token = "VK ACCESS TOKEN HERE"
 
 # current version of vk api
@@ -39,6 +39,9 @@ service_channel_name = "@service_channel_name"
 
 # ----------------------------------
 # Other settings
+
+# one of: DEBUG, INFO, WARNING, ERROR
+log_level = "DEBUG"
 
 # Timeout (how often to check for new posts in seconds)
 check_timeout = 180

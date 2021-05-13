@@ -232,9 +232,18 @@ if __name__ == "__main__":
     # set requests logging level to CRITICAL only
     logging.getLogger('requests').setLevel(logging.CRITICAL)
 
+    log_level = config.log_level
+    levels = {
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARNING,
+        "ERROR": logging.ERROR
+    }
+    log_level = levels.get(log_level, logging.DEBUG)
+
     logging.basicConfig(
         format='[%(asctime)s] %(filename)s:%(lineno)d %(levelname)s - %(message)s',
-        level=logging.DEBUG,
+        level=log_level,
         filename=config.bot_log_file,
         datefmt='%d.%m.%Y %H:%M:%S'
     )
