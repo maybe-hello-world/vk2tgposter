@@ -49,9 +49,6 @@ check_timeout = 180
 # where information about last resent post is stored
 lastid_file = "last_known_id.txt"
 
-# bot logging file
-bot_log_file = "vk2tg_repost.log"
-
 # ----------------------------------
 # Proxy settings
 
