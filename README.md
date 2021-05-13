@@ -14,6 +14,10 @@ In order to start you need to pass to /usr/src/app filled config.py file, file f
   
 Example:
 ```bash
+mkdir -p /var/log/vk2tgposter
+touch /var/log/vk2tgposter/bot.log
+touch /var/log/vk2tgposter/last_known_id.txt
+
 docker run -d --name vk2tgposter --restart unless-stopped \
     -v /home/username/vk2tgposter/config.py:/usr/src/app/config.py \
     -v /var/log/vk2tgposter/last_id.txt:/usr/src/app/last_id.txt \
