@@ -6,7 +6,7 @@
 vk_access_token = "VK ACCESS TOKEN HERE"
 
 # current version of vk api
-v = 5.75
+v = "5.130"
 
 # short name of your community
 domain = "nplusone"
@@ -34,7 +34,7 @@ telegram_bot_token = "telegram bot token here"
 # channel where to post
 channel_name = "@channel_name"
 
-# channel to send errors
+# channel to send errors and exceptions
 service_channel_name = "@service_channel_name"
 
 # ----------------------------------
