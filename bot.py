@@ -224,7 +224,7 @@ class VK2TGPoster:
 
                 time.sleep(5 * config.check_timeout)
             except BaseException as e:
-                logging.info(f"Bot stopped due to {e}")
+                logging.info(f"Bot stopped due to {str(e)}")
                 return
 
 
@@ -244,7 +244,6 @@ if __name__ == "__main__":
     logging.basicConfig(
         format='[%(asctime)s] %(filename)s:%(lineno)d %(levelname)s - %(message)s',
         level=log_level,
-        filename=config.bot_log_file,
         datefmt='%d.%m.%Y %H:%M:%S'
     )
 
