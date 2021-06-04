@@ -7,6 +7,7 @@ from typing import Optional, List
 import requests
 import logging
 import telebot
+from telebot import apihelper
 
 import config
 from Telebot429Wrapper import Telebot429Wrapper
@@ -16,6 +17,9 @@ class VK2TGPoster:
     def __init__(self):
         if config.owner is None and config.domain is None:
             raise ValueError("Either owner (number) or domain (short name) should be presented")
+
+        apihelper.READ_TIMEOUT = 20
+        apihelper.RETRY_ON_ERROR = True
 
         if config.use_proxy:
             self.__init_proxy()
